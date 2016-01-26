@@ -136,7 +136,7 @@ class Scanner
      */
     public function getHex()
     {
-        return $this->inputStream->charsWhile(static::CHARS_HEX);
+        return $this->inputStream->charsWhile(Scanner::CHARS_HEX);
     }
 
     /**
@@ -149,7 +149,7 @@ class Scanner
      */
     public function getAsciiAlpha()
     {
-        return $this->inputStream->charsWhile(static::CHARS_ALPHA);
+        return $this->inputStream->charsWhile(Scanner::CHARS_ALPHA);
     }
 
     /**
@@ -161,7 +161,7 @@ class Scanner
      */
     public function getAsciiAlphaNum()
     {
-        return $this->inputStream->charsWhile(static::CHARS_ALPHA_NUM);
+        return $this->inputStream->charsWhile(Scanner::CHARS_ALPHA_NUM);
     }
 
     /**
