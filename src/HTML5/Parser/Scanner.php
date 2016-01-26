@@ -1,4 +1,5 @@
 <?php
+
 namespace Masterminds\HTML5\Parser;
 
 /**
@@ -9,36 +10,45 @@ namespace Masterminds\HTML5\Parser;
 class Scanner
 {
 
+    /**
+     * Constant that includes all HEX-chars
+     */
     const CHARS_HEX = 'abcdefABCDEF01234567890';
-
-    const CHARS_ALNUM = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890';
-
+    /**
+     * Constant that includes all alpha and numeric chars.
+     */
+    const CHARS_ALPHA_NUM = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890';
+    /**
+     * Constant that includes only alpha chars.
+     */
     const CHARS_ALPHA = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    protected $is;
-
-    // Flipping this to true will give minisculely more debugging info.
+    /**
+     * @var InputStream Instance of InputStream
+     */
+    protected $inputStream;
+    /**
+     * @var boolean Flipping this to true will give minisculely more debugging info.
+     */
     public $debug = false;
 
     /**
      * Create a new Scanner.
      *
-     * @param \Masterminds\HTML5\Parser\InputStream $input
-     *            An InputStream to be scanned.
+     * @param InputStream $input An InputStream to be scanned.
      */
     public function __construct($input)
     {
-        $this->is = $input;
+        $this->inputStream = $input;
     }
 
     /**
      * Get the current position.
      *
-     * @return int The current intiger byte position.
+     * @return int The current int byte position.
      */
     public function position()
     {
-        return $this->is->key();
+        return $this->inputStream->key();
     }
 
     /**
@@ -48,7 +58,7 @@ class Scanner
      */
     public function peek()
     {
-        return $this->is->peek();
+        return $this->inputStream->peek();
     }
 
     /**
@@ -60,11 +70,14 @@ class Scanner
      */
     public function next()
     {
-        $this->is->next();
-        if ($this->is->valid()) {
-            if ($this->debug)
-                fprintf(STDOUT, "> %s\n", $this->is->current());
-            return $this->is->current();
+        $this->inputStream->next();
+
+        if ($this->inputStream->valid()) {
+            if ($this->debug) {
+                fprintf(STDOUT, "> %s\n", $this->inputStream->current());
+            }
+
+            return $this->inputStream->current();
         }
 
         return false;
@@ -79,8 +92,8 @@ class Scanner
      */
     public function current()
     {
-        if ($this->is->valid()) {
-            return $this->is->current();
+        if ($this->inputStream->valid()) {
+            return $this->inputStream->current();
         }
 
         return false;
@@ -88,10 +101,14 @@ class Scanner
 
     /**
      * Silently consume N chars.
+     *
+     * @param int $count Number of chars.
+     *
+     * @return void
      */
     public function consume($count = 1)
     {
-        for ($i = 0; $i < $count; ++ $i) {
+        for ($i = 0; $i < $count; ++$i) {
             $this->next();
         }
     }
@@ -100,12 +117,13 @@ class Scanner
      * Unconsume some of the data.
      * This moves the data pointer backwards.
      *
-     * @param int $howMany
-     *            The number of characters to move the pointer back.
+     * @param int $howMany The number of characters to move the pointer back.
+     *
+     * @return void
      */
     public function unconsume($howMany = 1)
     {
-        $this->is->unconsume($howMany);
+        $this->inputStream->unconsume($howMany);
     }
 
     /**
@@ -118,7 +136,7 @@ class Scanner
      */
     public function getHex()
     {
-        return $this->is->charsWhile(static::CHARS_HEX);
+        return $this->inputStream->charsWhile(static::CHARS_HEX);
     }
 
     /**
@@ -131,43 +149,43 @@ class Scanner
      */
     public function getAsciiAlpha()
     {
-        return $this->is->charsWhile(static::CHARS_ALPHA);
+        return $this->inputStream->charsWhile(static::CHARS_ALPHA);
     }
 
     /**
      * Get the next group of characters that are ASCII Alpha characters and numbers.
      *
-     * Note, along with getting the characters the pointer in the data will be
-     * moved as well.
+     * Note, along with getting the characters the pointer in the data will be moved as well.
      *
      * @return string The next group of ASCII alpha characters and numbers.
      */
     public function getAsciiAlphaNum()
     {
-        return $this->is->charsWhile(static::CHARS_ALNUM);
+        return $this->inputStream->charsWhile(static::CHARS_ALPHA_NUM);
     }
 
     /**
      * Get the next group of numbers.
      *
-     * Note, along with getting the characters the pointer in the data will be
-     * moved as well.
+     * Note, along with getting the characters the pointer in the data will be moved as well.
      *
      * @return string The next group of numbers.
      */
     public function getNumeric()
     {
-        return $this->is->charsWhile('0123456789');
+        return $this->inputStream->charsWhile('0123456789');
     }
 
     /**
      * Consume whitespace.
      *
      * Whitespace in HTML5 is: formfeed, tab, newline, space.
+     *
+     * @return string The next group after whitespace.
      */
     public function whitespace()
     {
-        return $this->is->charsWhile("\n\t\f ");
+        return $this->inputStream->charsWhile("\n\t\f ");
     }
 
     /**
@@ -177,23 +195,31 @@ class Scanner
      */
     public function currentLine()
     {
-        return $this->is->currentLine();
+        return $this->inputStream->currentLine();
     }
 
     /**
      * Read chars until something in the mask is encountered.
+     *
+     * @param string $mask
+     *
+     * @return boolean|int Returns index on success and false on failure.
      */
     public function charsUntil($mask)
     {
-        return $this->is->charsUntil($mask);
+        return $this->inputStream->charsUntil($mask);
     }
 
     /**
      * Read chars as long as the mask matches.
+     *
+     * @param string $mask
+     *
+     * @return string The next group that not matches mask.
      */
     public function charsWhile($mask)
     {
-        return $this->is->charsWhile($mask);
+        return $this->inputStream->charsWhile($mask);
     }
 
     /**
@@ -205,7 +231,7 @@ class Scanner
      */
     public function columnOffset()
     {
-        return $this->is->columnOffset();
+        return $this->inputStream->columnOffset();
     }
 
     /**
@@ -217,6 +243,6 @@ class Scanner
      */
     public function remainingChars()
     {
-        return $this->is->remainingChars();
+        return $this->inputStream->remainingChars();
     }
 }
