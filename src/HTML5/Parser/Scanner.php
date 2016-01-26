@@ -64,7 +64,7 @@ class Scanner
     /**
      * Get the next character.
      *
-     * Note: This advances the pointer.
+     * Note, his advances the pointer.
      *
      * @return string The next character.
      */
@@ -115,7 +115,8 @@ class Scanner
 
     /**
      * Unconsume some of the data.
-     * This moves the data pointer backwards.
+     *
+     * Note, this moves the data pointer backwards.
      *
      * @param int $howMany The number of characters to move the pointer back.
      *
@@ -129,8 +130,7 @@ class Scanner
     /**
      * Get the next group of that contains hex characters.
      *
-     * Note, along with getting the characters the pointer in the data will be
-     * moved as well.
+     * Note, along with getting the characters the pointer in the data will be moved as well.
      *
      * @return string The next group that is hex characters.
      */
@@ -142,8 +142,7 @@ class Scanner
     /**
      * Get the next group of characters that are ASCII Alpha characters.
      *
-     * Note, along with getting the characters the pointer in the data will be
-     * moved as well.
+     * Note, along with getting the characters the pointer in the data will be moved as well.
      *
      * @return string The next group of ASCII alpha characters.
      */
