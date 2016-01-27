@@ -1,5 +1,8 @@
 <?php
+
 namespace Masterminds\HTML5\Parser;
+
+use Masterminds\HTML5\Parser\Interfaces\InputStream;
 
 /**
  * The FileInputStream loads a file to be parsed.

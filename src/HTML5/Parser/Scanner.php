@@ -2,6 +2,8 @@
 
 namespace Masterminds\HTML5\Parser;
 
+use Masterminds\HTML5\Parser\Interfaces\InputStream;
+
 /**
  * The scanner.
  *
@@ -34,11 +36,11 @@ class Scanner
     /**
      * Create a new Scanner.
      *
-     * @param InputStream $input An InputStream to be scanned.
+     * @param InputStream $inputStream An InputStream to be scanned.
      */
-    public function __construct($input)
+    public function __construct(InputStream $inputStream)
     {
-        $this->inputStream = $input;
+        $this->inputStream = $inputStream;
     }
 
     /**

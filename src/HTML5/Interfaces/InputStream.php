@@ -1,5 +1,6 @@
 <?php
-namespace Masterminds\HTML5\Parser;
+
+namespace Masterminds\HTML5\Parser\Interfaces;
 
 /**
  * Interface for stream readers.

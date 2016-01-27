@@ -1,10 +1,11 @@
 <?php
 namespace Masterminds;
 
-use Masterminds\HTML5\Parser\FileInputStream;
-use Masterminds\HTML5\Parser\StringInputStream;
 use Masterminds\HTML5\Parser\DOMTreeBuilder;
+use Masterminds\HTML5\Parser\FileInputStream;
+use Masterminds\HTML5\Parser\Interfaces\InputStream;
 use Masterminds\HTML5\Parser\Scanner;
+use Masterminds\HTML5\Parser\StringInputStream;
 use Masterminds\HTML5\Parser\Tokenizer;
 use Masterminds\HTML5\Serializer\OutputRules;
 use Masterminds\HTML5\Serializer\Traverser;
@@ -60,8 +61,9 @@ class HTML5
      *            The path to the file to parse. If this is a resource, it is
      *            assumed to be an open stream whose pointer is set to the first
      *            byte of input.
-     * @param array $options
+     * @param array  $options
      *            Configuration options when parsing the HTML
+     *
      * @return \DOMDocument A DOM document. These object type is defined by the libxml
      *         library, and should have been included with your version of PHP.
      */
@@ -86,8 +88,9 @@ class HTML5
      *
      * @param string $string
      *            A html5 document as a string.
-     * @param array $options
+     * @param array  $options
      *            Configuration options when parsing the HTML
+     *
      * @return \DOMDocument A DOM document. DOM is part of libxml, which is included with
      *         almost all distribtions of PHP.
      */
@@ -108,7 +111,7 @@ class HTML5
      *            The path to the file to parse. If this is a resource, it is
      *            assumed to be an open stream whose pointer is set to the first
      *            byte of input.
-     * @param array $options
+     * @param array  $options
      *            Configuration options when parsing the HTML
      *
      * @return \DOMDocument A DOM document. These object type is defined by the libxml
@@ -124,7 +127,7 @@ class HTML5
      *
      * @param string $string
      *            The html5 fragment as a string.
-     * @param array $options
+     * @param array  $options
      *            Configuration options when parsing the HTML
      *
      * @return \DOMDocumentFragment A DOM fragment. The DOM is part of libxml, which is included with
@@ -163,7 +166,7 @@ class HTML5
      * Lower-level loading function. This requires an input stream instead
      * of a string, file, or resource.
      */
-    public function parse(\Masterminds\HTML5\Parser\InputStream $input, array $options = array())
+    public function parse(InputStream $input, array $options = array())
     {
         $this->errors = array();
         $events = new DOMTreeBuilder(false, array_merge($this->getOptions(), $options));
@@ -182,7 +185,7 @@ class HTML5
      * Lower-level loading function. This requires an input stream instead
      * of a string, file, or resource.
      */
-    public function parseFragment(\Masterminds\HTML5\Parser\InputStream $input, array $options = array())
+    public function parseFragment(InputStream $input, array $options = array())
     {
         $events = new DOMTreeBuilder(true, array_merge($this->getOptions(), $options));
         $scanner = new Scanner($input);
@@ -197,11 +200,11 @@ class HTML5
     /**
      * Save a DOM into a given file as HTML5.
      *
-     * @param mixed $dom
+     * @param mixed  $dom
      *            The DOM to be serialized.
      * @param string $file
      *            The filename to be written.
-     * @param array $options
+     * @param array  $options
      *            Configuration options when serializing the DOM. These include:
      *            - encode_entities: Text written to the output is escaped by default and not all
      *            entities are encoded. If this is set to true all entities will be encoded.
@@ -245,6 +248,6 @@ class HTML5
         $stream = fopen('php://temp', 'w');
         $this->save($dom, $stream, array_merge($this->getOptions(), $options));
 
-        return stream_get_contents($stream, - 1, 0);
+        return stream_get_contents($stream, -1, 0);
     }
 }

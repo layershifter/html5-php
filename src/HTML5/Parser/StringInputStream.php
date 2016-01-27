@@ -4,6 +4,8 @@
  */
 namespace Masterminds\HTML5\Parser;
 
+use Masterminds\HTML5\Parser\Interfaces\InputStream;
+
 /*
  *
 * Based on code from html5lib:
@@ -66,7 +68,7 @@ class StringInputStream implements InputStream
      * Create a new InputStream wrapper.
      *
      * @param $data Data
-     *            to parse
+     *              to parse
      */
     public function __construct($data, $encoding = 'UTF-8', $debug = '')
     {
@@ -74,9 +76,9 @@ class StringInputStream implements InputStream
         if ($debug)
             fprintf(STDOUT, $debug, $data, strlen($data));
 
-            // There is good reason to question whether it makes sense to
-            // do this here, since most of these checks are done during
-            // parsing, and since this check doesn't actually *do* anything.
+        // There is good reason to question whether it makes sense to
+        // do this here, since most of these checks are done during
+        // parsing, and since this check doesn't actually *do* anything.
         $this->errors = UTF8Utils::checkForIllegalCodepoints($data);
         // if (!empty($e)) {
         // throw new ParseError("UTF-8 encoding issues: " . implode(', ', $e));
@@ -188,7 +190,7 @@ class StringInputStream implements InputStream
      */
     public function next()
     {
-        $this->char ++;
+        $this->char++;
     }
 
     /**
@@ -246,8 +248,9 @@ class StringInputStream implements InputStream
      *
      * @param string $bytes
      *            Bytes to match.
-     * @param int $max
+     * @param int    $max
      *            Maximum number of bytes to scan.
+     *
      * @return mixed Index or false if no match is found. You should use strong
      *         equality when checking the result, since index could be 0.
      */
@@ -263,7 +266,7 @@ class StringInputStream implements InputStream
             $len = strcspn($this->data, $bytes, $this->char);
         }
 
-        $string = (string) substr($this->data, $this->char, $len);
+        $string = (string)substr($this->data, $this->char, $len);
         $this->char += $len;
 
         return $string;
@@ -279,7 +282,7 @@ class StringInputStream implements InputStream
      *            A mask of bytes to match. If ANY byte in this mask matches the
      *            current char, the pointer advances and the char is part of the
      *            substring.
-     * @param int $max
+     * @param int    $max
      *            The max number of chars to read.
      */
     public function charsWhile($bytes, $max = null)
@@ -293,7 +296,7 @@ class StringInputStream implements InputStream
         } else {
             $len = strspn($this->data, $bytes, $this->char);
         }
-        $string = (string) substr($this->data, $this->char, $len);
+        $string = (string)substr($this->data, $this->char, $len);
         $this->char += $len;
 
         return $string;
