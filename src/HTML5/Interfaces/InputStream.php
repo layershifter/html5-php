@@ -5,11 +5,9 @@ namespace Masterminds\HTML5\Parser\Interfaces;
 /**
  * Interface for stream readers.
  *
- * The parser only reads from streams. Various input sources can write
- * an adapater to this InputStream.
+ * The parser only reads from streams. Various input sources can write an adapter to this InputStream.
  *
- * Currently provided InputStream implementations include
- * FileInputStream and StringInputStream.
+ * Currently provided InputStream implementations include FileInputStream and StringInputStream.
  */
 interface InputStream extends \Iterator
 {
@@ -18,6 +16,8 @@ interface InputStream extends \Iterator
      * Returns the current line that is being consumed.
      *
      * TODO: Move this to the scanner.
+     *
+     * @return int The current line number.
      */
     public function currentLine();
 
@@ -36,6 +36,8 @@ interface InputStream extends \Iterator
      * Get all characters until EOF.
      *
      * This consumes characters until the EOF.
+     *
+     * @return int The number of characters remaining.
      */
     public function remainingChars();
 
@@ -48,12 +50,12 @@ interface InputStream extends \Iterator
      * and returns the matched substring.
      *
      * @see strcspn
-     * @param string $bytes
-     *            Bytes to match.
-     * @param int $max
-     *            Maximum number of bytes to scan.
-     * @return mixed Index or false if no match is found. You should use strong
-     *         equality when checking the result, since index could be 0.
+     *
+     * @param string $bytes Bytes to match.
+     * @param int    $max   Maximum number of bytes to scan.
+     *
+     * @return boolean|int Index or false if no match is found. You should use strong equality when checking the
+     *                     result, since index could be 0.
      */
     public function charsUntil($bytes, $max = null);
 
@@ -64,25 +66,28 @@ interface InputStream extends \Iterator
      * and returns the matched substring.
      *
      * @see strspn
-     * @param string $bytes
-     *            A mask of bytes to match. If ANY byte in this mask matches the
-     *            current char, the pointer advances and the char is part of the
-     *            substring.
-     * @param int $max
-     *            The max number of chars to read.
+     *
+     * @param string $bytes A mask of bytes to match. If ANY byte in this mask matches the current char, the pointer
+     *                      advances and the char is part of the substring.
+     * @param int    $max   The max number of chars to read.
+     *
+     * @return string The next group that not matches mask.
      */
     public function charsWhile($bytes, $max = null);
 
     /**
      * Unconsume one character.
      *
-     * @param int $howMany
-     *            The number of characters to move the pointer back.
+     * @param int $howMany The number of characters to move the pointer back.
+     *
+     * @return void
      */
     public function unconsume($howMany = 1);
 
     /**
      * Retrieve the next character without advancing the pointer.
+     *
+     * @return string The next character.
      */
     public function peek();
 }
