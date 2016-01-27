@@ -98,7 +98,7 @@ interface EventHandler
     /**
      * Emitted when the parser encounters an error condition.
      */
-    public function parseError($msg, $line, $col);
+    public function parseError($message, $line, $col);
 
     /**
      * A CDATA section.
