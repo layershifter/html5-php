@@ -4,7 +4,7 @@
  */
 namespace Masterminds\HTML5\Parser;
 
-use Masterminds\HTML5\Parser\Interfaces\InputStream;
+use Masterminds\HTML5\Parser\Interfaces\InputStreamInterface;
 
 /*
  *
@@ -41,7 +41,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // - // indicates regular comments
 
-class StringInputStream implements InputStream
+class StringInputStream implements InputStreamInterface
 {
 
     /**

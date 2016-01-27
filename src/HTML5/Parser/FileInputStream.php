@@ -2,7 +2,7 @@
 
 namespace Masterminds\HTML5\Parser;
 
-use Masterminds\HTML5\Parser\Interfaces\InputStream;
+use Masterminds\HTML5\Parser\Interfaces\InputStreamInterface;
 
 /**
  * The FileInputStream loads a file to be parsed.
@@ -16,7 +16,7 @@ use Masterminds\HTML5\Parser\Interfaces\InputStream;
  *
  * @todo A buffered input stream would be useful.
  */
-class FileInputStream extends StringInputStream implements InputStream
+class FileInputStream extends StringInputStream implements InputStreamInterface
 {
 
     /**

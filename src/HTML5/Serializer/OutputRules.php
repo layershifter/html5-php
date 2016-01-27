@@ -3,8 +3,8 @@
  * @file
  * The rules for generating output in the serializer.
  *
- * These output rules are likely to generate output similar to the document that
- * was parsed. It is not intended to output exactly the document that was parsed.
+ * These output rules are likely to generate output similar to the document that was parsed. It is not intended to
+ * output exactly the document that was parsed.
  */
 namespace Masterminds\HTML5\Serializer;
 
@@ -198,15 +198,15 @@ class OutputRules implements \Masterminds\HTML5\Serializer\RulesInterface
         $this->nl();
     }
 
-    public function element($ele)
+    public function element($element)
     {
-        $name = $ele->tagName;
+        $name = $element->tagName;
 
         // Per spec:
         // If the element has a declared namespace in the HTML, MathML or
         // SVG namespaces, we use the lname instead of the tagName.
-        if ($this->traverser->isLocalElement($ele)) {
-            $name = $ele->localName;
+        if ($this->traverser->isLocalElement($element)) {
+            $name = $element->localName;
         }
 
         // If we are in SVG or MathML there is special handling.
@@ -218,15 +218,15 @@ class OutputRules implements \Masterminds\HTML5\Serializer\RulesInterface
             $this->outputMode = static::IM_IN_MATHML;
         }
 
-        $this->openTag($ele);
+        $this->openTag($element);
         if (Elements::isA($name, Elements::TEXT_RAW)) {
-            foreach ($ele->childNodes as $child) {
+            foreach ($element->childNodes as $child) {
                 $this->wr($child->data);
             }
         } else {
             // Handle children.
-            if ($ele->hasChildNodes()) {
-                $this->traverser->children($ele->childNodes);
+            if ($element->hasChildNodes()) {
+                $this->traverser->children($element->childNodes);
             }
 
             // Close out the SVG or MathML special handling.
@@ -237,46 +237,46 @@ class OutputRules implements \Masterminds\HTML5\Serializer\RulesInterface
 
         // If not unary, add a closing tag.
         if (! Elements::isA($name, Elements::VOID_TAG)) {
-            $this->closeTag($ele);
+            $this->closeTag($element);
         }
     }
 
     /**
      * Write a text node.
      *
-     * @param \DOMText $ele
+     * @param \DOMText $element
      *            The text node to write.
      */
-    public function text($ele)
+    public function text($element)
     {
-        if (isset($ele->parentNode) && isset($ele->parentNode->tagName) && Elements::isA($ele->parentNode->localName, Elements::TEXT_RAW)) {
-            $this->wr($ele->data);
+        if (isset($element->parentNode) && isset($element->parentNode->tagName) && Elements::isA($element->parentNode->localName, Elements::TEXT_RAW)) {
+            $this->wr($element->data);
             return;
         }
 
         // FIXME: This probably needs some flags set.
-        $this->wr($this->enc($ele->data));
+        $this->wr($this->enc($element->data));
     }
 
-    public function cdata($ele)
+    public function cdata($element)
     {
         // This encodes CDATA.
-        $this->wr($ele->ownerDocument->saveXML($ele));
+        $this->wr($element->ownerDocument->saveXML($element));
     }
 
-    public function comment($ele)
+    public function comment($element)
     {
         // These produce identical output.
         // $this->wr('<!--')->wr($ele->data)->wr('-->');
-        $this->wr($ele->ownerDocument->saveXML($ele));
+        $this->wr($element->ownerDocument->saveXML($element));
     }
 
-    public function processorInstruction($ele)
+    public function processorInstruction($element)
     {
         $this->wr('<?')
-            ->wr($ele->target)
+            ->wr($element->target)
             ->wr(' ')
-            ->wr($ele->data)
+            ->wr($element->data)
             ->wr('?>');
     }
     /**

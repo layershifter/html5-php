@@ -2,7 +2,7 @@
 
 namespace Masterminds\HTML5\Parser;
 
-use Masterminds\HTML5\Parser\Interfaces\InputStream;
+use Masterminds\HTML5\Parser\Interfaces\InputStreamInterface;
 
 /**
  * The scanner.
@@ -25,7 +25,7 @@ class Scanner
      */
     const CHARS_ALPHA = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     /**
-     * @var InputStream Instance of InputStream
+     * @var InputStreamInterface Instance of InputStream
      */
     protected $inputStream;
     /**
@@ -36,9 +36,9 @@ class Scanner
     /**
      * Create a new Scanner.
      *
-     * @param InputStream $inputStream An InputStream to be scanned.
+     * @param InputStreamInterface $inputStream An InputStream to be scanned.
      */
-    public function __construct(InputStream $inputStream)
+    public function __construct(InputStreamInterface $inputStream)
     {
         $this->inputStream = $inputStream;
     }

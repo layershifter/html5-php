@@ -9,7 +9,7 @@ namespace Masterminds\HTML5\Parser\Interfaces;
  *
  * Currently provided InputStream implementations include FileInputStream and StringInputStream.
  */
-interface InputStream extends \Iterator
+interface InputStreamInterface extends \Iterator
 {
 
     /**
