@@ -1,4 +1,5 @@
 <?php
+
 namespace Masterminds\HTML5\Parser;
 
 use Masterminds\HTML5\Entities;
@@ -34,6 +35,10 @@ class CharacterReference
 
     /**
      * Given a decimal number, return the UTF-8 character.
+     *
+     * @param int $int Entity code
+     *
+     * @return string
      */
     public static function lookupDecimal($int)
     {
@@ -45,9 +50,13 @@ class CharacterReference
 
     /**
      * Given a hexidecimal number, return the UTF-8 character.
+     *
+     * @param string $hexDec HEX code of symbol
+     *
+     * @return string
      */
-    public static function lookupHex($hexdec)
+    public static function lookupHex($hexDec)
     {
-        return static::lookupDecimal(hexdec($hexdec));
+        return static::lookupDecimal(hexdec($hexDec));
     }
 }
