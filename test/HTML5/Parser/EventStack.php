@@ -2,7 +2,7 @@
 namespace Masterminds\HTML5\Tests\Parser;
 
 use Masterminds\HTML5\Elements;
-use Masterminds\HTML5\Parser\EventHandler;
+use Masterminds\HTML5\Interfaces\EventHandlerInterface;
 
 /**
  * This testing class gathers events from a parser and builds a stack of events.
@@ -14,7 +14,7 @@ use Masterminds\HTML5\Parser\EventHandler;
  * script or pre tags. This is to match the behavior required by the HTML5 spec,
  * which says that the tree builder must tell the tokenizer when to switch states.
  */
-class EventStack implements EventHandler
+class EventStackInterface implements EventHandlerInterface
 {
 
     protected $stack;

@@ -3,6 +3,7 @@ namespace Masterminds\HTML5\Parser;
 
 use Masterminds\HTML5\Elements;
 use Masterminds\HTML5\Exceptions\Exception;
+use Masterminds\HTML5\Interfaces\EventHandlerInterface;
 
 /**
  * Create an HTML5 DOM tree from events.
@@ -19,7 +20,7 @@ use Masterminds\HTML5\Exceptions\Exception;
  * HTML5 spec. The processor needs to be re-written to accomodate this. See, for example, the Go language HTML5
  * parser.
  */
-class DOMTreeBuilder implements EventHandler
+class DOMTreeBuilder implements EventHandlerInterface
 {
     /**
      * Defined in http://www.w3.org/TR/html51/infrastructure.html#html-namespace-0
@@ -589,9 +590,13 @@ class DOMTreeBuilder implements EventHandler
     }
 
     /**
+     * Emitted when the parser encounters an error condition.
+     *
      * @param string $message
      * @param int    $line
      * @param int    $col
+     *
+     * @return void
      */
     public function parseError($message, $line = 0, $col = 0)
     {
@@ -609,9 +614,9 @@ class DOMTreeBuilder implements EventHandler
     }
 
     /**
-     * @todo Add description
+     * A CDATA section.
      *
-     * @param string $data
+     * @param string $data The unparsed character data.
      *
      * @return void
      */
@@ -622,10 +627,12 @@ class DOMTreeBuilder implements EventHandler
     }
 
     /**
-     * @todo Add description and add type to $data
+     * This is a holdover from the XML spec.
      *
-     * @param string $name
-     * @param null   $data
+     * While user agents don't get PIs, server-side does.
+     *
+     * @param string $name The name of the processor (e.g. 'php').
+     * @param string $data The unparsed data.
      *
      * @return void
      */

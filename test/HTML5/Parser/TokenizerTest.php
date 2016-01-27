@@ -266,49 +266,49 @@ class TokenizerTest extends \Masterminds\HTML5\Tests\TestCase
             ),
             '<!DOCTYPE html PUBLIC "foo bar">' => array(
                 'html',
-                EventStack::DOCTYPE_PUBLIC,
+                EventStackInterface::DOCTYPE_PUBLIC,
                 'foo bar',
                 false
             ),
             "<!DOCTYPE html PUBLIC 'foo bar'>" => array(
                 'html',
-                EventStack::DOCTYPE_PUBLIC,
+                EventStackInterface::DOCTYPE_PUBLIC,
                 'foo bar',
                 false
             ),
             '<!DOCTYPE      html      PUBLIC     "foo bar"    >' => array(
                 'html',
-                EventStack::DOCTYPE_PUBLIC,
+                EventStackInterface::DOCTYPE_PUBLIC,
                 'foo bar',
                 false
             ),
             "<!DOCTYPE html \nPUBLIC\n'foo bar'>" => array(
                 'html',
-                EventStack::DOCTYPE_PUBLIC,
+                EventStackInterface::DOCTYPE_PUBLIC,
                 'foo bar',
                 false
             ),
             '<!DOCTYPE html SYSTEM "foo bar">' => array(
                 'html',
-                EventStack::DOCTYPE_SYSTEM,
+                EventStackInterface::DOCTYPE_SYSTEM,
                 'foo bar',
                 false
             ),
             "<!DOCTYPE html SYSTEM 'foo bar'>" => array(
                 'html',
-                EventStack::DOCTYPE_SYSTEM,
+                EventStackInterface::DOCTYPE_SYSTEM,
                 'foo bar',
                 false
             ),
             '<!DOCTYPE      html      SYSTEM "foo/bar"    >' => array(
                 'html',
-                EventStack::DOCTYPE_SYSTEM,
+                EventStackInterface::DOCTYPE_SYSTEM,
                 'foo/bar',
                 false
             ),
             "<!DOCTYPE html \nSYSTEM\n'foo bar'>" => array(
                 'html',
-                EventStack::DOCTYPE_SYSTEM,
+                EventStackInterface::DOCTYPE_SYSTEM,
                 'foo bar',
                 false
             )
@@ -318,43 +318,43 @@ class TokenizerTest extends \Masterminds\HTML5\Tests\TestCase
         $bad = array(
             '<!DOCTYPE>' => array(
                 null,
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
             '<!DOCTYPE    >' => array(
                 null,
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
             '<!DOCTYPE  foo' => array(
                 'foo',
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
             '<!DOCTYPE foo PUB' => array(
                 'foo',
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
             '<!DOCTYPE foo PUB>' => array(
                 'foo',
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
             '<!DOCTYPE  foo PUB "Looks good">' => array(
                 'foo',
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
             '<!DOCTYPE  foo SYSTME "Looks good"' => array(
                 'foo',
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
@@ -362,38 +362,38 @@ class TokenizerTest extends \Masterminds\HTML5\Tests\TestCase
             // Can't tell whether these are ids or ID types, since the context is chopped.
             '<!DOCTYPE foo PUBLIC' => array(
                 'foo',
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
             '<!DOCTYPE  foo PUBLIC>' => array(
                 'foo',
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
             '<!DOCTYPE foo SYSTEM' => array(
                 'foo',
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
             '<!DOCTYPE  foo SYSTEM>' => array(
                 'foo',
-                EventStack::DOCTYPE_NONE,
+                EventStackInterface::DOCTYPE_NONE,
                 null,
                 true
             ),
 
             '<!DOCTYPE html SYSTEM "foo bar"' => array(
                 'html',
-                EventStack::DOCTYPE_SYSTEM,
+                EventStackInterface::DOCTYPE_SYSTEM,
                 'foo bar',
                 true
             ),
             '<!DOCTYPE html SYSTEM "foo bar" more stuff>' => array(
                 'html',
-                EventStack::DOCTYPE_SYSTEM,
+                EventStackInterface::DOCTYPE_SYSTEM,
                 'foo bar',
                 true
             )
@@ -947,7 +947,7 @@ class TokenizerTest extends \Masterminds\HTML5\Tests\TestCase
     // ================================================================
     protected function createTokenizer($string, $debug = false)
     {
-        $eventHandler = new EventStack();
+        $eventHandler = new EventStackInterface();
         $stream = new StringInputStream($string);
         $scanner = new Scanner($stream);
 

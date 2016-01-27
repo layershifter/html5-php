@@ -3,6 +3,7 @@
 namespace Masterminds\HTML5\Parser;
 
 use Masterminds\HTML5\Elements;
+use Masterminds\HTML5\Interfaces\EventHandlerInterface;
 
 /**
  * The HTML5 tokenizer.
@@ -32,7 +33,7 @@ class Tokenizer
      */
     protected $scanner;
     /**
-     * @var EventHandler
+     * @var EventHandlerInterface
      */
     protected $events;
     /**
@@ -67,10 +68,10 @@ class Tokenizer
      * Typically, parsing a document involves creating a new tokenizer, giving it a scanner (input) and an event
      * handler (output), and then calling the Tokenizer::parse() method.
      *
-     * @param Scanner      $scanner      A scanner initialized with an input stream.
-     * @param EventHandler $eventHandler An event handler, initialized and ready to receive events.
+     * @param Scanner               $scanner      A scanner initialized with an input stream.
+     * @param EventHandlerInterface $eventHandler An event handler, initialized and ready to receive events.
      */
-    public function __construct(Scanner $scanner, EventHandler $eventHandler)
+    public function __construct(Scanner $scanner, EventHandlerInterface $eventHandler)
     {
         $this->scanner = $scanner;
         $this->events = $eventHandler;
@@ -729,7 +730,7 @@ class Tokenizer
 
         // EOF: die.
         if ($tok === false) {
-            $this->events->doctype('html5', EventHandler::DOCTYPE_NONE, '', true);
+            $this->events->doctype('html5', EventHandlerInterface::DOCTYPE_NONE, '', true);
             return $this->eof();
         }
 
@@ -752,7 +753,7 @@ class Tokenizer
         // If false, emit a parse error, DOCTYPE, and return.
         if ($tok === false) {
             $this->parseError('Unexpected EOF in DOCTYPE declaration.');
-            $this->events->doctype($doctypeName, EventHandler::DOCTYPE_NONE, null, true);
+            $this->events->doctype($doctypeName, EventHandlerInterface::DOCTYPE_NONE, null, true);
             return true;
         }
 
@@ -778,7 +779,7 @@ class Tokenizer
         // Get ID, and flag it as pub or system.
         if (($pub == 'PUBLIC' || $pub == 'SYSTEM') && $white > 0) {
             // Get the sys ID.
-            $type = $pub == 'PUBLIC' ? EventHandler::DOCTYPE_PUBLIC : EventHandler::DOCTYPE_SYSTEM;
+            $type = $pub == 'PUBLIC' ? EventHandlerInterface::DOCTYPE_PUBLIC : EventHandlerInterface::DOCTYPE_SYSTEM;
             $id = $this->quotedString("\0>");
             if ($id === false) {
                 $this->events->doctype($doctypeName, $type, $pub, false);
