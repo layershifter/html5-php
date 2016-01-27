@@ -1,5 +1,6 @@
 <?php
-namespace Masterminds\HTML5;
+
+namespace Masterminds\HTML5\Exceptions;
 
 /**
  * The base exception for the HTML5 project.
