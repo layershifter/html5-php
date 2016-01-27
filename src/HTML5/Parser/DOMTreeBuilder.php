@@ -273,7 +273,7 @@ class DOMTreeBuilder implements EventHandlerInterface
 
         // Autoclose p tags where appropriate.
         if ($this->insertMode >= static::IM_IN_BODY && Elements::isA($name, Elements::AUTOCLOSE_P)) {
-            $this->autoclose('p');
+            $this->autoClose('p');
         }
 
         // Set insert mode:
@@ -337,7 +337,7 @@ class DOMTreeBuilder implements EventHandlerInterface
         }
 
         if ($this->onlyInline && Elements::isA($lname, Elements::BLOCK_TAG)) {
-            $this->autoclose($this->onlyInline);
+            $this->autoClose($this->onlyInline);
             $this->onlyInline = null;
         }
 
@@ -518,7 +518,7 @@ class DOMTreeBuilder implements EventHandlerInterface
             unset($this->pushes[$cid]);
         }
 
-        if (!$this->autoclose($lname)) {
+        if (!$this->autoClose($lname)) {
             $this->parseError('Could not find closing tag for ' . $lname);
         }
 
@@ -639,14 +639,14 @@ class DOMTreeBuilder implements EventHandlerInterface
     public function processingInstruction($name, $data = null)
     {
         // XXX: Ignore initial XML declaration, per the spec.
-        if ($this->insertMode == static::IM_INITIAL && 'xml' == strtolower($name)) {
+        if ($this->insertMode === static::IM_INITIAL && 'xml' === strtolower($name)) {
             return;
         }
 
-        // Important: The processor may modify the current DOM tree however
-        // it sees fit.
+        // Important: The processor may modify the current DOM tree however it sees fit.
         if (isset($this->processor)) {
             $res = $this->processor->process($this->current, $name, $data);
+
             if (!empty($res)) {
                 $this->current = $res;
             }
@@ -656,7 +656,6 @@ class DOMTreeBuilder implements EventHandlerInterface
 
         // Otherwise, this is just a dumb PI element.
         $node = $this->document->createProcessingInstruction($name, $data);
-
         $this->current->appendChild($node);
     }
 
@@ -665,6 +664,8 @@ class DOMTreeBuilder implements EventHandlerInterface
     // ==========================================================================
 
     /**
+     * @todo Read Section 2.9 and remove code in comment if it not needed
+     *
      * Apply normalization rules to a tag name.
      *
      * See sections 2.9 and 8.1.2.
@@ -676,12 +677,20 @@ class DOMTreeBuilder implements EventHandlerInterface
     protected function normalizeTagName($name)
     {
         /*
-         * Section 2.9 suggests that we should not do this. if (strpos($name, ':') !== false) { // We know from the grammar that there must be at least one other // char besides :, since : is not a legal tag start. $parts = explode(':', $name); return array_pop($parts); }
+         * Section 2.9 suggests that we should not do this.
+         *
+         * if (strpos($name, ':') !== false) {
+         *     // We know from the grammar that there must be at least one other char besides :, since : is not a
+         *     // legal tag start.
+         *     $parts = explode(':', $name); return array_pop($parts);
+         * }
          */
         return $name;
     }
 
     /**
+     * @todo Seems method is never used
+     *
      * @param string $name
      *
      * @throws Exception
@@ -694,38 +703,49 @@ class DOMTreeBuilder implements EventHandlerInterface
     /**
      * Automatically climb the tree and close the closest node with the matching $tag.
      *
+     * @param string $tagName
+     *
      * @return boolean
      */
-    protected function autoclose($tag)
+    protected function autoClose($tagName)
     {
         $working = $this->current;
+
         do {
-            if ($working->nodeType != XML_ELEMENT_NODE) {
+            if ($working->nodeType !== XML_ELEMENT_NODE) {
                 return false;
             }
-            if ($working->tagName == $tag) {
+
+            if ($working->tagName === $tagName) {
                 $this->current = $working->parentNode;
 
                 return true;
             }
         } while ($working = $working->parentNode);
+
         return false;
     }
 
     /**
+     * @todo \DOMDocumentFragment doesn't have tagName property, need some checks. Seems $this->current is DOMElement
+     *
      * Checks if the given tag name is an ancestor of the present candidate.
      *
      * If $this->current or anything above $this->current matches the given tag name, this returns true.
+     *
+     * @param string $tagName
      *
      * @return boolean
      */
     protected function isAncestor($tagName)
     {
         $candidate = $this->current;
+
         while ($candidate->nodeType === XML_ELEMENT_NODE) {
-            if ($candidate->tagName == $tagName) {
+            if ($candidate->tagName === $tagName) {
                 return true;
             }
+
             $candidate = $candidate->parentNode;
         }
 
@@ -733,12 +753,17 @@ class DOMTreeBuilder implements EventHandlerInterface
     }
 
     /**
+     * @todo It seems that method doesn't used in project
+     * @todo Also \DOMDocumentFragment doesn't have tagName property
+     *
      * Returns true if the immediate parent element is of the given tag name.
+     *
+     * @param string $tagName
      *
      * @return boolean
      */
-    protected function isParent($tagname)
+    protected function isParent($tagName)
     {
-        return $this->current->tagName == $tagname;
+        return $this->current->tagName === $tagName;
     }
 }
