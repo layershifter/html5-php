@@ -1,9 +1,11 @@
 <?php
+
 namespace Masterminds\HTML5\Parser;
 
 use Masterminds\HTML5\Elements;
 use Masterminds\HTML5\Exceptions\Exception;
 use Masterminds\HTML5\Interfaces\EventHandlerInterface;
+use Masterminds\HTML5\Interfaces\InstructionProcessorInterface;
 
 /**
  * Create an HTML5 DOM tree from events.
@@ -134,6 +136,10 @@ class DOMTreeBuilder implements EventHandlerInterface
      * @var array
      */
     protected $errors = array();
+    /**
+     * @var TreeBuildingRules Instance of rules object
+     */
+    protected $rules;
 
     /**
      * DOMTreeBuilder constructor.
@@ -145,32 +151,35 @@ class DOMTreeBuilder implements EventHandlerInterface
     {
         $this->options = $options;
 
-        if (isset($options[self::OPT_TARGET_DOC])) {
+        if (array_key_exists(self::OPT_TARGET_DOC, $options)) {
             $this->document = $options[self::OPT_TARGET_DOC];
         } else {
-            $impl = new \DOMImplementation();
+            $implementation = new \DOMImplementation();
             // XXX:
             // Create the doctype. For now, we are always creating HTML5
             // documents, and attempting to up-convert any older DTDs to HTML5.
-            $dt = $impl->createDocumentType('html');
+            $docType = $implementation->createDocumentType('html');
             // $this->doc = \DOMImplementation::createDocument(NULL, 'html', $dt);
-            $this->document = $impl->createDocument(null, null, $dt);
+            $this->document = $implementation->createDocument(null, null, $docType);
         }
-        $this->errors = array();
 
+        $this->errors = array();
         $this->current = $this->document; // ->documentElement;
 
         // Create a rules engine for tags.
         $this->rules = new TreeBuildingRules($this->document);
-
         $implicitNS = array();
-        if (isset($this->options[self::OPT_IMPLICIT_NS])) {
+
+        // TODO: Check implicitNamespaces && self::OPT_IMPLICIT_NS
+        // Seems it's same, but with different names
+
+        if (array_key_exists(self::OPT_IMPLICIT_NS, $this->options)) {
             $implicitNS = $this->options[self::OPT_IMPLICIT_NS];
-        } elseif (isset($this->options["implicitNamespaces"])) {
-            $implicitNS = $this->options["implicitNamespaces"];
+        } elseif (array_key_exists('implicitNamespaces', $this->options)) {
+            $implicitNS = $this->options['implicitNamespaces'];
         }
 
-        // Fill $nsStack with the defalut HTML5 namespaces, plus the "implicitNamespaces" array taken form $options
+        // Fill $nsStack with the default HTML5 namespaces, plus the "implicitNamespaces" array taken form $options
         array_unshift($this->nsStack, $implicitNS + array(
                 '' => self::NAMESPACE_HTML
             ) + $this->implicitNamespaces);
@@ -212,27 +221,32 @@ class DOMTreeBuilder implements EventHandlerInterface
      * This is used for handling Processor Instructions as they are inserted. If omitted, PI's are inserted directly
      * into the DOM tree.
      *
+     * @param InstructionProcessorInterface $processor
+     *
      * @return void
      */
-    public function setInstructionProcessor(\Masterminds\HTML5\InstructionProcessor $processor)
+    public function setInstructionProcessor(InstructionProcessorInterface $processor)
     {
         $this->processor = $processor;
     }
 
     /**
-     * @param string   $name
-     * @param int      $idType
-     * @param null|int $id
-     * @param boolean  $quirks
+     * A doctype declaration.
+     *
+     * @param string  $name     The name of the root element.
+     * @param int     $typeId   One of DOCTYPE_NONE, DOCTYPE_PUBLIC, or DOCTYPE_SYSTEM.
+     * @param string  $publicId The identifier. For DOCTYPE_PUBLIC, this is the public ID. If DOCTYPE_SYSTEM, then this
+     *                          is a system ID.
+     * @param boolean $quirks   Indicates whether the builder should enter quirks mode.
      */
-    public function doctype($name, $idType = 0, $id = null, $quirks = false)
+    public function doctype($name, $typeId = 0, $publicId = null, $quirks = false)
     {
         // This is used solely for setting quirks mode. Currently we don't
         // try to preserve the inbound DT. We convert it to HTML5.
         $this->quirks = $quirks;
 
         if ($this->insertMode > static::IM_INITIAL) {
-            $this->parseError("Illegal placement of DOCTYPE tag. Ignoring: " . $name);
+            $this->parseError(sprintf('Illegal placement of DOCTYPE tag. Ignoring: %s', $name));
 
             return;
         }
@@ -451,15 +465,15 @@ class DOMTreeBuilder implements EventHandlerInterface
     }
 
     /**
-     * @todo Add description
+     * An end-tag.
      *
-     * @param string $name
+     * @param string $name Tag's name
      *
      * @return void
      */
     public function endTag($name)
     {
-        $lname = $this->normalizeTagName($name);
+        $elementName = $this->normalizeTagName($name);
 
         // Ignore closing tags for unary elements.
         if (Elements::isA($name, Elements::VOID_TAG)) {
@@ -482,14 +496,14 @@ class DOMTreeBuilder implements EventHandlerInterface
             }
 
             // Ignore the tag.
-            $this->parseError("Illegal closing tag at global scope.");
+            $this->parseError('Illegal closing tag at global scope.');
 
             return;
         }
 
         // Special case handling for SVG.
-        if ($this->insertMode == static::IM_IN_SVG) {
-            $lname = Elements::normalizeSvgElement($lname);
+        if ($this->insertMode === static::IM_IN_SVG) {
+            $elementName = Elements::normalizeSvgElement($elementName);
         }
 
         // See https://github.com/facebook/hhvm/issues/2962
@@ -506,7 +520,7 @@ class DOMTreeBuilder implements EventHandlerInterface
 
         // XXX: HTML has no parent. What do we do, though,
         // if this element appears in the wrong place?
-        if ($lname == 'html') {
+        if ($elementName === 'html') {
             return;
         }
 
@@ -518,20 +532,20 @@ class DOMTreeBuilder implements EventHandlerInterface
             unset($this->pushes[$cid]);
         }
 
-        if (!$this->autoClose($lname)) {
-            $this->parseError('Could not find closing tag for ' . $lname);
+        if (!$this->autoClose($elementName)) {
+            $this->parseError(sprintf('Could not find closing tag for %s', $elementName));
         }
 
         // switch ($this->insertMode) {
-        switch ($lname) {
-            case "head":
+        switch ($elementName) {
+            case 'head':
                 $this->insertMode = static::IM_AFTER_HEAD;
                 break;
-            case "body":
+            case 'body':
                 $this->insertMode = static::IM_AFTER_BODY;
                 break;
-            case "svg":
-            case "mathml":
+            case 'svg':
+            case 'mathml':
                 $this->insertMode = static::IM_IN_BODY;
                 break;
         }
@@ -540,19 +554,23 @@ class DOMTreeBuilder implements EventHandlerInterface
     /**
      * @todo Add description and typehint
      *
-     * @param $cdata
+     * @param $cData
      *
      * @return void
      */
-    public function comment($cdata)
+    public function comment($cData)
     {
         // TODO: Need to handle case where comment appears outside of the HTML tag.
-        $node = $this->document->createComment($cdata);
+        $node = $this->document->createComment($cData);
         $this->current->appendChild($node);
     }
 
     /**
-     * @todo Add description and typehint
+     * @todo Add type hint
+     *
+     * A unit of parsed character data.
+     *
+     * Entities in this text are *already decoded*.
      *
      * @param $data
      *
@@ -562,18 +580,19 @@ class DOMTreeBuilder implements EventHandlerInterface
     {
         // XXX: Hmmm.... should we really be this strict?
         if ($this->insertMode < static::IM_IN_HEAD) {
-            // Per '8.2.5.4.3 The "before head" insertion mode' the characters
-            // " \t\n\r\f" should be ignored but no mention of a parse error. This is
-            // practical as most documents contain these characters. Other text is not
+            // Per '8.2.5.4.3 The "before head" insertion mode' the characters " \t\n\r\f" should be ignored but no
+            // mention of a parse error. This is practical as most documents contain these characters. Other text is not
             // expected here so recording a parse error is necessary.
-            $dataTmp = trim($data, " \t\n\r\f");
-            if (!empty($dataTmp)) {
+            $tmpData = trim($data, " \t\n\r\f");
+
+            if ($tmpData !== '') {
                 // fprintf(STDOUT, "Unexpected insert mode: %d", $this->insertMode);
-                $this->parseError("Unexpected text. Ignoring: " . $dataTmp);
+                $this->parseError(sprintf('Unexpected text. Ignoring: %s', $tmpData));
             }
 
             return;
         }
+
         // fprintf(STDOUT, "Appending text %s.", $data);
         $node = $this->document->createTextNode($data);
         $this->current->appendChild($node);
@@ -600,7 +619,7 @@ class DOMTreeBuilder implements EventHandlerInterface
      */
     public function parseError($message, $line = 0, $col = 0)
     {
-        $this->errors[] = sprintf("Line %d, Col %d: %s", $line, $col, $message);
+        $this->errors[] = sprintf('Line %d, Col %d: %s', $line, $col, $message);
     }
 
     /**

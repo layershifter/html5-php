@@ -1,5 +1,8 @@
 <?php
+
 namespace Masterminds\HTML5\Serializer;
+
+use Masterminds\HTML5\Interfaces\RulesInterface;
 
 /**
  * Traverser for walking a DOM tree.

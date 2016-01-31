@@ -1,6 +1,8 @@
 <?php
 
-namespace Masterminds\HTML5\Serializer;
+namespace Masterminds\HTML5\Interfaces;
+
+use Masterminds\HTML5\Serializer\Traverser;
 
 /**
  * The interface definition for Rules to generate output.

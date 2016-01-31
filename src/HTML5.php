@@ -1,9 +1,10 @@
 <?php
+
 namespace Masterminds;
 
 use Masterminds\HTML5\Parser\DOMTreeBuilder;
 use Masterminds\HTML5\Parser\FileInputStream;
-use Masterminds\HTML5\Parser\Interfaces\InputStreamInterface;
+use Masterminds\HTML5\Interfaces\InputStreamInterface;
 use Masterminds\HTML5\Parser\Scanner;
 use Masterminds\HTML5\Parser\StringInputStream;
 use Masterminds\HTML5\Parser\Tokenizer;

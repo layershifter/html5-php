@@ -4,7 +4,7 @@
  */
 namespace Masterminds\HTML5\Parser;
 
-use Masterminds\HTML5\Parser\Interfaces\InputStreamInterface;
+use Masterminds\HTML5\Interfaces\InputStreamInterface;
 
 /*
  *

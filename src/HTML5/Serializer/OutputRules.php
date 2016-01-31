@@ -13,7 +13,7 @@ use Masterminds\HTML5\Elements;
 /**
  * Generate the output html5 based on element rules.
  */
-class OutputRules implements \Masterminds\HTML5\Serializer\RulesInterface
+class OutputRules implements \Masterminds\HTML5\Interfaces\RulesInterface
 {
     /**
      * Defined in http://www.w3.org/TR/html51/infrastructure.html#html-namespace-0
@@ -157,7 +157,7 @@ class OutputRules implements \Masterminds\HTML5\Serializer\RulesInterface
 
     const DOCTYPE = '<!DOCTYPE html>';
 
-    public function __construct($output, $options = array())
+    public function __construct($output, array $options = array())
     {
         if (isset($options['encode_entities'])) {
             $this->encode = $options['encode_entities'];
