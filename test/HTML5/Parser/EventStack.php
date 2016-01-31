@@ -50,12 +50,12 @@ class EventStackInterface implements EventHandlerInterface
         );
     }
 
-    public function doctype($name, $type = 0, $id = null, $quirks = false)
+    public function doctype($name, $type = 0, $publicId = null, $quirks = false)
     {
         $args = array(
             $name,
             $type,
-            $id,
+            $publicId,
             $quirks
         );
         $this->store('doctype', $args);
@@ -77,10 +77,10 @@ class EventStackInterface implements EventHandlerInterface
         ));
     }
 
-    public function comment($cdata)
+    public function comment($cData)
     {
         $this->store('comment', array(
-            $cdata
+            $cData
         ));
     }
 
@@ -89,11 +89,11 @@ class EventStackInterface implements EventHandlerInterface
         $this->store('cdata', func_get_args());
     }
 
-    public function text($cdata)
+    public function text($cData)
     {
         // fprintf(STDOUT, "Received TEXT event with: " . $cdata);
         $this->store('text', array(
-            $cdata
+            $cData
         ));
     }
 

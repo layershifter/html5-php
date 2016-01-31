@@ -5,17 +5,14 @@ namespace Masterminds\HTML5\Interfaces;
 /**
  * Standard events for HTML5.
  *
- * This is roughly analogous to a SAX2 or expat-style interface.
- * However, it is tuned specifically for HTML5, according to section 8
- * of the HTML5 specification.
+ * This is roughly analogous to a SAX2 or expat-style interface. However, it is tuned specifically for HTML5, according
+ * to section 8 of the HTML5 specification.
  *
- * An event handler receives parser events. For a concrete
- * implementation, see DOMTreeBuilder.
+ * An event handler receives parser events. For a concrete implementation, see DOMTreeBuilder.
  *
- * Quirks support in the parser is limited to close-in syntax (malformed
- * tags or attributes). Higher order syntax and semantic issues with a
- * document (e.g. mismatched tags, illegal nesting, etc.) are the
- * responsibility of the event handler implementation.
+ * Quirks support in the parser is limited to close-in syntax (malformed tags or attributes). Higher order syntax and
+ * semantic issues with a document (e.g. mismatched tags, illegal nesting, etc.) are the responsibility of the event
+ * handler implementation.
  *
  * See HTML5 spec section 8.2.4
  */
@@ -32,13 +29,13 @@ interface EventHandlerInterface
     /**
      * A doctype declaration.
      *
-     * @param string  $name   The name of the root element.
-     * @param int     $idType One of DOCTYPE_NONE, DOCTYPE_PUBLIC, or DOCTYPE_SYSTEM.
-     * @param string  $id     The identifier. For DOCTYPE_PUBLIC, this is the public ID. If DOCTYPE_SYSTEM, then this
-     *                        is a system ID.
-     * @param boolean $quirks Indicates whether the builder should enter quirks mode.
+     * @param string  $name     The name of the root element.
+     * @param int     $typeId   One of DOCTYPE_NONE, DOCTYPE_PUBLIC, or DOCTYPE_SYSTEM.
+     * @param string  $publicId The identifier. For DOCTYPE_PUBLIC, this is the public ID. If DOCTYPE_SYSTEM, then this
+     *                          is a system ID.
+     * @param boolean $quirks   Indicates whether the builder should enter quirks mode.
      */
-    public function doctype($name, $idType = 0, $id = null, $quirks = false);
+    public function doctype($name, $typeId = 0, $publicId = null, $quirks = false);
 
     /**
      * A start tag.
@@ -70,6 +67,8 @@ interface EventHandlerInterface
     /**
      * An end-tag.
      *
+     * @param string $name Tag's name
+     *
      * @return void
      */
     public function endTag($name);
@@ -77,18 +76,22 @@ interface EventHandlerInterface
     /**
      * A comment section (unparsed character data).
      *
+     * @param $cData
+     *
      * @return void
      */
-    public function comment($cdata);
+    public function comment($cData);
 
     /**
      * A unit of parsed character data.
      *
      * Entities in this text are *already decoded*.
      *
+     * @param $cData
+     *
      * @return void
      */
-    public function text($cdata);
+    public function text($cData);
 
     /**
      * Indicates that the document has been entirely processed.
